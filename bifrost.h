@@ -2,7 +2,7 @@
  * @file bifrost.h
  * @brief  Declaração dos códigos e classes para handlers e sensores Bifrost.
  *
- * A comunicação entre os processos
+ * A comunicação entre os dispositivos é feita usando um envelope padrão de mensagens.
  * 
  * Para as unidades que recebem dados e enviam para a central bifrost, usamos a Classe
  * BifrostHandler. Ela cria uma conexão com o Dispatcher usando a lib SoftwareSerial e 
@@ -46,6 +46,15 @@ String makeEnvelope(const String& src, const String& dst, const JsonVariant& pay
  */
 template <typename T>
 String makeEnvelope(const String& src, const String& dst, T simplePayload, const String& msgType = "state", int version = 1);
+
+/**
+ * @brief Recebe uma String e retorna a validação do padrão de mensagens.
+ *
+ * @param message Uma String que será validada para determinar se está de acordo com o padrão esperado.
+ *
+ * @return O número inteiro de acordo com o protocolo, caso for inválida, retorna -1.
+ */
+int isValidEnvelope(const String& message);
 
 /**
  * @class BifrostHandler
@@ -99,7 +108,7 @@ String makeEnvelope(const String& src, const String& dst, T simplePayload, const
   doc["src"] = src;
   doc["dst"] = dst;
   doc["type"] = msgType;
-  doc["ts"] = millis(); // tempo desde o esp estar ligado.
+  doc["ts"] = millis();
   doc["payload"] = simplePayload;
 
   String output;
@@ -113,7 +122,7 @@ inline String makeEnvelope(const String& src, const String& dst, const JsonVaria
   doc["src"] = src;
   doc["dst"] = dst;
   doc["type"] = msgType;
-  doc["ts"] = millis();  // tempo desde o esp estar ligado
+  doc["ts"] = millis();
   doc["payload"] = payload;
 
   String output;
